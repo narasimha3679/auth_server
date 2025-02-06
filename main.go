@@ -25,6 +25,7 @@ func main() {
 	// Public routes
 	r.POST("/auth/register", handlers.Register)
 	r.POST("/auth/login", handlers.Login)
+	r.POST("/auth/refresh", handlers.RefreshToken)
 
 	// Protected routes group
 	protected := r.Group("/api")

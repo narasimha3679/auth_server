@@ -53,6 +53,29 @@
 							"path": ["auth", "login"]
 						}
 					}
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/refresh",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["auth", "refresh"]
+						}
+					}
 				}
 			]
 		},
@@ -66,7 +89,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{jwt_token}}"
+								"value": "Bearer {{access_token}}"
 							}
 						],
 						"url": {
@@ -83,8 +106,12 @@
 	],
 	"variable": [
 		{
-			"key": "jwt_token",
-			"value": "your_jwt_token_here"
+			"key": "access_token",
+			"value": "your_access_token_here"
+		},
+		{
+			"key": "refresh_token",
+			"value": "your_refresh_token_here"
 		}
 	]
 }

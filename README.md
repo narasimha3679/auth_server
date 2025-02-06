@@ -5,7 +5,7 @@ A robust authentication server built with Go, similar to Auth0, providing JWT-ba
 ## Features
 
 - User registration and authentication
-- JWT token-based authorization
+- JWT token-based authorization with refresh tokens
 - Protected routes with middleware
 - PostgreSQL database integration
 - Password hashing with bcrypt
@@ -129,13 +129,31 @@ Content-Type: application/json
 Response:
 ```json
 {
-	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+	"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+	"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+#### Refresh Token
+```http
+POST /auth/refresh
+Content-Type: application/json
+
+{
+	"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+Response:
+```json
+{
+	"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
 ### Protected Routes
 
-All protected routes require the JWT token in the Authorization header:
+All protected routes require the JWT access token in the Authorization header:
 ```http
 Authorization: Bearer <your-jwt-token>
 ```
@@ -171,6 +189,112 @@ The API returns appropriate HTTP status codes and error messages:
 - 404: Not Found
 - 500: Internal Server Error
 
+## Frontend Implementation Guide
+
+### Authentication Flow
+
+1. **Initial Login**
+   - User logs in with email/password
+   - Server returns both access token (24h) and refresh token (permanent)
+   - Store both tokens securely (localStorage/secure storage)
+   ```javascript
+   const response = await fetch('/auth/login', {
+	   method: 'POST',
+	   headers: { 'Content-Type': 'application/json' },
+	   body: JSON.stringify({ email, password })
+   });
+   const { access_token, refresh_token } = await response.json();
+   localStorage.setItem('access_token', access_token);
+   localStorage.setItem('refresh_token', refresh_token);
+   ```
+
+2. **Making API Requests**
+   - Use access token for all API requests
+   - Handle 401 errors by refreshing the token
+   ```javascript
+   async function apiRequest(url, options = {}) {
+	   // Add access token to headers
+	   const headers = {
+		   ...options.headers,
+		   'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+	   };
+
+	   let response = await fetch(url, { ...options, headers });
+	   
+	   // If token expired, refresh it and retry
+	   if (response.status === 401) {
+		   const refreshed = await refreshAccessToken();
+		   if (refreshed) {
+			   // Retry with new access token
+			   headers.Authorization = `Bearer ${localStorage.getItem('access_token')}`;
+			   response = await fetch(url, { ...options, headers });
+		   }
+	   }
+	   
+	   return response;
+   }
+   ```
+
+3. **Token Refresh Mechanism**
+   - Use refresh token to get new access token
+   - Original refresh token remains valid
+   ```javascript
+   async function refreshAccessToken() {
+	   try {
+		   const response = await fetch('/auth/refresh', {
+			   method: 'POST',
+			   headers: { 'Content-Type': 'application/json' },
+			   body: JSON.stringify({
+				   refresh_token: localStorage.getItem('refresh_token')
+			   })
+		   });
+
+		   if (response.ok) {
+			   const { access_token } = await response.json();
+			   localStorage.setItem('access_token', access_token);
+			   return true;
+		   }
+		   
+		   // If refresh fails, redirect to login
+		   window.location.href = '/login';
+		   return false;
+	   } catch (error) {
+		   console.error('Token refresh failed:', error);
+		   return false;
+	   }
+   }
+   ```
+
+4. **Logout Handling**
+   ```javascript
+   function logout() {
+	   localStorage.removeItem('access_token');
+	   localStorage.removeItem('refresh_token');
+	   window.location.href = '/login';
+   }
+   ```
+
+### Key Implementation Notes
+
+1. **Token Storage**
+   - Access token: Short-lived (24 hours)
+   - Refresh token: Never expires (permanent session)
+   - Store tokens securely based on platform:
+	 - Web: localStorage/sessionStorage
+	 - Mobile: Secure storage/Keychain
+	 - Desktop: Encrypted storage
+
+2. **Error Handling**
+   - 401 responses indicate expired access token
+   - Failed refresh attempts indicate invalid refresh token
+   - Handle network errors appropriately
+
+3. **Security Considerations**
+   - Store tokens securely
+   - Use HTTPS for all API requests
+   - Clear tokens on logout
+   - Implement rate limiting for refresh attempts
+
 ## Security Features
 
 1. Password Hashing
@@ -178,9 +302,11 @@ The API returns appropriate HTTP status codes and error messages:
    - Secure comparison during login
 
 2. JWT Authentication
-   - Tokens expire after 24 hours
-   - Signed with a secret key
+   - Access tokens expire after 24 hours
+   - Refresh tokens never expire (permanent session)
+   - Tokens are signed with a secret key
    - Contains user ID for authentication
+   - Automatic token refresh mechanism
 
 3. Protected Routes
    - Middleware verification of JWT tokens
