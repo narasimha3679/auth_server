@@ -40,6 +40,13 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// Check if it's a refresh token - if so, deny access
+		if refresh, ok := claims["refresh"].(bool); ok && refresh {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Refresh token cannot be used for authentication"})
+			c.Abort()
+			return
+		}
+
 		c.Set("user_id", uint(claims["user_id"].(float64)))
 		c.Next()
 	}

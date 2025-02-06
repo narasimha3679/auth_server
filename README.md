@@ -153,10 +153,12 @@ Response:
 
 ### Protected Routes
 
-All protected routes require the JWT access token in the Authorization header:
+All protected routes require the JWT access token (not refresh token) in the Authorization header:
 ```http
-Authorization: Bearer <your-jwt-token>
+Authorization: Bearer <your-access-token>
 ```
+
+Note: Refresh tokens cannot be used to access protected routes. They are only for obtaining new access tokens through the /auth/refresh endpoint.
 
 #### Get User Profile
 ```http
