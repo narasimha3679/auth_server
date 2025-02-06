@@ -2,28 +2,26 @@ package utils
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"auth-server/config"
 )
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 const (
-	resetCodeLength = 32
+	resetCodeLength = 6
 	resetCodeExpiry = time.Minute * 15
 )
 
-// GenerateResetCode creates a random reset code and stores it in Redis
+// GenerateResetCode creates a 6-digit reset code and stores it in Redis
 func GenerateResetCode(email string) (string, error) {
-	// Generate random bytes
-	bytes := make([]byte, resetCodeLength)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", fmt.Errorf("failed to generate reset code: %v", err)
-	}
-
-	resetCode := hex.EncodeToString(bytes)
+	// Generate 6-digit code
+	resetCode := fmt.Sprintf("%06d", rand.Intn(1000000))
 
 	// Store in Redis with expiration
 	ctx := context.Background()
