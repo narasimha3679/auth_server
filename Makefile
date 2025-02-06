@@ -5,7 +5,7 @@ all: build
 
 # Build the application
 build:
-	go build -o bin/auth-server main.go
+	go build
 
 # Run the application
 run:
