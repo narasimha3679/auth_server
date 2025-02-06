@@ -76,6 +76,52 @@
 							"path": ["auth", "refresh"]
 						}
 					}
+				},
+				{
+					"name": "Request Password Reset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/request-reset",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["auth", "request-reset"]
+						}
+					}
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reset_code\": \"your_reset_code_here\",\n    \"password\": \"new_password123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/reset-password",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["auth", "reset-password"]
+						}
+					}
 				}
 			]
 		},
