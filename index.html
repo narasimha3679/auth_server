@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Server - JWT Authentication System</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --text: #1f2937;
+            --light: #f3f4f6;
+            --code-bg: #1a1a1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        
+        .nav {
+            background: var(--primary);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav h1 {
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature {
+            padding: 2rem;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .section {
+            margin: 4rem 0;
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+        
+        pre {
+            background: var(--code-bg);
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        code {
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        
+        .endpoint {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .endpoint h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            background: var(--light);
+            font-weight: 600;
+        }
+        
+        .footer {
+            background: var(--light);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-content">
+            <h1>Auth Server</h1>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#installation">Installation</a>
+                <a href="#api">API</a>
+                <a href="#docs">Documentation</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Auth Server</h1>
+        <p>A robust authentication server built with Go, providing JWT-based authentication and user management capabilities similar to Auth0.</p>
+    </div>
+
+    <div class="container">
+        <section id="features" class="section">
+            <h2>Key Features</h2>
+            <div class="features">
+                <div class="feature">
+                    <h3>JWT Authentication</h3>
+                    <p>Secure token-based authentication with refresh token support and middleware protection.</p>
+                </div>
+                <div class="feature">
+                    <h3>User Management</h3>
+                    <p>Complete user registration, authentication, and profile management system.</p>
+                </div>
+                <div class="feature">
+                    <h3>PostgreSQL Integration</h3>
+                    <p>Robust data persistence with GORM ORM and PostgreSQL database.</p>
+                </div>
+                <div class="feature">
+                    <h3>Security First</h3>
+                    <p>Password hashing with bcrypt, protected routes, and comprehensive security features.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="installation" class="section">
+            <h2>Installation</h2>
+            <pre><code># Clone the repository
+git clone &lt;repository-url&gt;
+cd auth-server
+
+# Install dependencies
+make deps
+
+# Configure environment
+cp .env.example .env
+
+# Create database
+make create-db
+
+# Run the server
+make run</code></pre>
+        </section>
+
+        <section id="api" class="section">
+            <h2>API Endpoints</h2>
+            
+            <div class="endpoint">
+                <h4><span class="method">POST</span> /auth/register</h4>
+                <p>Register a new user account.</p>
+                <pre><code>{
+    "email": "user@example.com",
+    "password": "password123",
+    "first_name": "John",
+    "last_name": "Doe"
+}</code></pre>
+            </div>
+
+            <div class="endpoint">
+                <h4><span class="method">POST</span> /auth/login</h4>
+                <p>Authenticate and receive JWT tokens.</p>
+                <pre><code>{
+    "email": "user@example.com",
+    "password": "password123"
+}</code></pre>
+            </div>
+
+            <div class="endpoint">
+                <h4><span class="method">GET</span> /api/profile</h4>
+                <p>Get authenticated user profile.</p>
+                <pre><code>Authorization: Bearer &lt;your-access-token&gt;</code></pre>
+            </div>
+        </section>
+
+        <section id="docs" class="section">
+            <h2>Documentation</h2>
+            
+            <h3>Project Structure</h3>
+            <pre><code>auth-server/
+├── config/
+│   └── database.go
+├── handlers/
+│   └── auth.go
+├── middleware/
+│   └── auth.go
+├── models/
+│   └── user.go
+├── utils/
+│   └── jwt.go
+├── .env
+├── go.mod
+├── main.go
+└── README.md</code></pre>
+
+            <h3>Database Schema</h3>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>uint</td>
+                    <td>Primary key</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>string</td>
+                    <td>Unique user email</td>
+                </tr>
+                <tr>
+                    <td>Password</td>
+                    <td>string</td>
+                    <td>Hashed password</td>
+                </tr>
+                <tr>
+                    <td>FirstName</td>
+                    <td>string</td>
+                    <td>User's first name</td>
+                </tr>
+                <tr>
+                    <td>LastName</td>
+                    <td>string</td>
+                    <td>User's last name</td>
+                </tr>
+            </table>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>Auth Server - Open Source JWT Authentication System</p>
+    </footer>
+</body>
+</html>
