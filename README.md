@@ -1,4 +1,4 @@
-# Auth Server
+# [Auth Server](https://narasimha3679.github.io/auth_server)
 
 A robust authentication server built with Go, similar to Auth0, providing JWT-based authentication and user management capabilities.
 
