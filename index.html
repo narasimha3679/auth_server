@@ -1,339 +1,492 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auth Server - JWT Authentication System</title>
-    <style>
-        :root {
-            --primary: #2563eb;
-            --secondary: #1e40af;
-            --text: #1f2937;
-            --light: #f3f4f6;
-            --code-bg: #1a1a1a;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text);
-        }
-        
-        .nav {
-            background: var(--primary);
-            padding: 1rem;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .nav h1 {
-            color: white;
-            font-size: 1.5rem;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-        
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .hero {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 8rem 2rem 4rem;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .hero p {
-            font-size: 1.25rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 2rem;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-        
-        .feature {
-            padding: 2rem;
-            border-radius: 8px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-        
-        .section {
-            margin: 4rem 0;
-        }
-        
-        h2 {
-            color: var(--primary);
-            margin-bottom: 2rem;
-        }
-        
-        pre {
-            background: var(--code-bg);
-            color: #fff;
-            padding: 1.5rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 1rem 0;
-        }
-        
-        code {
-            font-family: 'Monaco', 'Consolas', monospace;
-        }
-        
-        .endpoint {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .endpoint h4 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-        
-        .method {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-        
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        th {
-            background: var(--light);
-            font-weight: 600;
-        }
-        
-        .footer {
-            background: var(--light);
-            padding: 2rem;
-            text-align: center;
-            margin-top: 4rem;
-        }
-        
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .container {
-                padding: 2rem 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auth Server - Open Source Authentication Server</title>
+  <style>
+    /* Reset some default styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f4f4f4;
+      scroll-behavior: smooth;
+    }
+
+    a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      background: linear-gradient(135deg, #2980b9, #6dd5fa);
+      color: #fff;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    nav {
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 0.5rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    nav ul li {
+      margin: 0.5rem;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    section {
+      margin-bottom: 3rem;
+    }
+    section h2 {
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #2980b9;
+      padding-bottom: 0.3rem;
+    }
+    section h3 {
+      margin: 1.5rem 0 1rem;
+      color: #2980b9;
+    }
+
+    /* Code block styling */
+    pre {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 1rem;
+      overflow-x: auto;
+      border-radius: 5px;
+      margin: 1rem 0;
+    }
+    code {
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    /* Table of contents list */
+    .toc {
+      background: #fff;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      border-left: 4px solid #2980b9;
+    }
+    .toc ul {
+      list-style: none;
+      padding-left: 1rem;
+    }
+    .toc li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Footer styling */
+    footer {
+      background: #fff;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #777;
+      border-top: 1px solid #ddd;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <nav class="nav">
-        <div class="nav-content">
-            <h1>Auth Server</h1>
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#installation">Installation</a>
-                <a href="#api">API</a>
-                <a href="#docs">Documentation</a>
-            </div>
-        </div>
-    </nav>
+  <header>
+    <h1>Auth Server</h1>
+    <p>A robust authentication server built with Go, similar to Auth0, providing JWT-based authentication and user management capabilities.</p>
+  </header>
 
-    <div class="hero">
-        <h1>Auth Server</h1>
-        <p>A robust authentication server built with Go, providing JWT-based authentication and user management capabilities similar to Auth0.</p>
-    </div>
+  <nav>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#structure">Project Structure</a></li>
+      <li><a href="#prerequisites">Prerequisites</a></li>
+      <li><a href="#dependencies">Dependencies</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#development">Development Commands</a></li>
+      <li><a href="#running">Running the Server</a></li>
+      <li><a href="#api">API Endpoints</a></li>
+      <li><a href="#frontend">Frontend Guide</a></li>
+      <li><a href="#security">Security Features</a></li>
+      <li><a href="#database">Database Schema</a></li>
+      <li><a href="#contributing">Contributing</a></li>
+      <li><a href="#testing">Testing</a></li>
+    </ul>
+  </nav>
 
-    <div class="container">
-        <section id="features" class="section">
-            <h2>Key Features</h2>
-            <div class="features">
-                <div class="feature">
-                    <h3>JWT Authentication</h3>
-                    <p>Secure token-based authentication with refresh token support and middleware protection.</p>
-                </div>
-                <div class="feature">
-                    <h3>User Management</h3>
-                    <p>Complete user registration, authentication, and profile management system.</p>
-                </div>
-                <div class="feature">
-                    <h3>PostgreSQL Integration</h3>
-                    <p>Robust data persistence with GORM ORM and PostgreSQL database.</p>
-                </div>
-                <div class="feature">
-                    <h3>Security First</h3>
-                    <p>Password hashing with bcrypt, protected routes, and comprehensive security features.</p>
-                </div>
-            </div>
-        </section>
+  <main>
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>This open source project is an authentication server built with Go. It provides JWT-based authentication, user management capabilities, and more—similar to Auth0.</p>
+    </section>
 
-        <section id="installation" class="section">
-            <h2>Installation</h2>
-            <pre><code># Clone the repository
-git clone &lt;repository-url&gt;
-cd auth-server
+    <section id="features">
+      <h2>Features</h2>
+      <ul>
+        <li>User registration and authentication</li>
+        <li>JWT token-based authorization with refresh tokens</li>
+        <li>Protected routes with middleware</li>
+        <li>PostgreSQL database integration</li>
+        <li>Password hashing with bcrypt</li>
+        <li>RESTful API endpoints</li>
+      </ul>
+    </section>
 
-# Install dependencies
-make deps
-
-# Configure environment
-cp .env.example .env
-
-# Create database
-make create-db
-
-# Run the server
-make run</code></pre>
-        </section>
-
-        <section id="api" class="section">
-            <h2>API Endpoints</h2>
-            
-            <div class="endpoint">
-                <h4><span class="method">POST</span> /auth/register</h4>
-                <p>Register a new user account.</p>
-                <pre><code>{
-    "email": "user@example.com",
-    "password": "password123",
-    "first_name": "John",
-    "last_name": "Doe"
-}</code></pre>
-            </div>
-
-            <div class="endpoint">
-                <h4><span class="method">POST</span> /auth/login</h4>
-                <p>Authenticate and receive JWT tokens.</p>
-                <pre><code>{
-    "email": "user@example.com",
-    "password": "password123"
-}</code></pre>
-            </div>
-
-            <div class="endpoint">
-                <h4><span class="method">GET</span> /api/profile</h4>
-                <p>Get authenticated user profile.</p>
-                <pre><code>Authorization: Bearer &lt;your-access-token&gt;</code></pre>
-            </div>
-        </section>
-
-        <section id="docs" class="section">
-            <h2>Documentation</h2>
-            
-            <h3>Project Structure</h3>
-            <pre><code>auth-server/
+    <section id="structure">
+      <h2>Project Structure</h2>
+      <pre><code>auth-server/
 ├── config/
-│   └── database.go
+│   └── database.go     # Database configuration and connection
 ├── handlers/
-│   └── auth.go
+│   └── auth.go         # Authentication handlers (register, login)
 ├── middleware/
-│   └── auth.go
+│   └── auth.go         # JWT authentication middleware
 ├── models/
-│   └── user.go
+│   └── user.go         # User model definition
 ├── utils/
-│   └── jwt.go
-├── .env
-├── go.mod
-├── main.go
-└── README.md</code></pre>
+│   └── jwt.go          # JWT utility functions
+├── .env                # Environment configuration
+├── go.mod              # Go module file
+├── main.go             # Application entry point
+└── README.md           # Documentation</code></pre>
+    </section>
 
-            <h3>Database Schema</h3>
-            <table>
-                <tr>
-                    <th>Field</th>
-                    <th>Type</th>
-                    <th>Description</th>
-                </tr>
-                <tr>
-                    <td>ID</td>
-                    <td>uint</td>
-                    <td>Primary key</td>
-                </tr>
-                <tr>
-                    <td>Email</td>
-                    <td>string</td>
-                    <td>Unique user email</td>
-                </tr>
-                <tr>
-                    <td>Password</td>
-                    <td>string</td>
-                    <td>Hashed password</td>
-                </tr>
-                <tr>
-                    <td>FirstName</td>
-                    <td>string</td>
-                    <td>User's first name</td>
-                </tr>
-                <tr>
-                    <td>LastName</td>
-                    <td>string</td>
-                    <td>User's last name</td>
-                </tr>
-            </table>
-        </section>
-    </div>
+    <section id="prerequisites">
+      <h2>Prerequisites</h2>
+      <ul>
+        <li>Go 1.21 or higher</li>
+        <li>PostgreSQL database</li>
+        <li>Git (optional)</li>
+      </ul>
+    </section>
 
-    <footer class="footer">
-        <p>Auth Server - Open Source JWT Authentication System</p>
-    </footer>
+    <section id="dependencies">
+      <h2>Dependencies</h2>
+      <ul>
+        <li>gin-gonic/gin: Web framework</li>
+        <li>golang-jwt/jwt: JWT token handling</li>
+        <li>gorm.io/gorm: ORM library</li>
+        <li>gorm.io/driver/postgres: PostgreSQL driver</li>
+        <li>golang.org/x/crypto: Password hashing</li>
+        <li>joho/godotenv: Environment configuration</li>
+      </ul>
+    </section>
+
+    <section id="installation">
+      <h2>Installation</h2>
+      <ol>
+        <li>
+          <strong>Clone the repository (optional):</strong>
+          <pre><code>git clone &lt;repository-url&gt;
+cd auth-server</code></pre>
+        </li>
+        <li>
+          <strong>Install dependencies:</strong>
+          <pre><code>make deps</code></pre>
+        </li>
+        <li>
+          <strong>Configure environment variables:</strong>
+          <p>Create a <code>.env</code> file in the root directory with the following content:</p>
+          <pre><code>DB_HOST=localhost
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_NAME=auth_db
+DB_PORT=5432
+JWT_SECRET=your_jwt_secret_key
+PORT=8080</code></pre>
+        </li>
+        <li>
+          <strong>Create PostgreSQL database:</strong>
+          <pre><code>make create-db</code></pre>
+        </li>
+      </ol>
+    </section>
+
+    <section id="development">
+      <h2>Development Commands</h2>
+      <p>The project includes a Makefile with common development commands:</p>
+      <ul>
+        <li><code>make build</code> - Build the application</li>
+        <li><code>make run</code> - Run the application</li>
+        <li><code>make test</code> - Run tests</li>
+        <li><code>make clean</code> - Clean build artifacts</li>
+        <li><code>make deps</code> - Install dependencies</li>
+        <li><code>make create-db</code> - Create PostgreSQL database</li>
+        <li><code>make drop-db</code> - Drop PostgreSQL database</li>
+        <li><code>make help</code> - Show available commands</li>
+      </ul>
+    </section>
+
+    <section id="running">
+      <h2>Running the Server</h2>
+      <p>Start the server:</p>
+      <pre><code>go run main.go</code></pre>
+      <p>The server will start on <code>http://localhost:8080</code> (or the port specified in your .env file).</p>
+    </section>
+
+    <section id="api">
+      <h2>API Endpoints</h2>
+      <h3>Public Routes</h3>
+      <h4>Register User</h4>
+      <pre><code>POST /auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "first_name": "John",
+  "last_name": "Doe"
+}</code></pre>
+
+      <h4>Login User</h4>
+      <pre><code>POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}</code></pre>
+      <p>Response:</p>
+      <pre><code>{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+
+      <h4>Refresh Token</h4>
+      <pre><code>POST /auth/refresh
+Content-Type: application/json
+
+{
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+      <p>Response:</p>
+      <pre><code>{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</code></pre>
+
+      <h3>Protected Routes</h3>
+      <p>All protected routes require the JWT access token (not refresh token) in the Authorization header:</p>
+      <pre><code>Authorization: Bearer &lt;your-access-token&gt;</code></pre>
+      <p>Note: Refresh tokens cannot be used to access protected routes. They are only for obtaining new access tokens through the <code>/auth/refresh</code> endpoint.</p>
+
+      <h4>Get User Profile</h4>
+      <pre><code>GET /api/profile</code></pre>
+      <p>Response:</p>
+      <pre><code>{
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "last_login": "2024-01-01T00:00:00Z",
+    "is_active": true,
+    "email_verified": false
+  }
+}</code></pre>
+
+      <h3>Error Handling</h3>
+      <p>The API returns appropriate HTTP status codes and error messages:</p>
+      <ul>
+        <li>200: Success</li>
+        <li>201: Created (successful registration)</li>
+        <li>400: Bad Request (invalid input)</li>
+        <li>401: Unauthorized (invalid credentials or token)</li>
+        <li>404: Not Found</li>
+        <li>500: Internal Server Error</li>
+      </ul>
+    </section>
+
+    <section id="frontend">
+      <h2>Frontend Implementation Guide</h2>
+      <h3>Authentication Flow</h3>
+      <ol>
+        <li>
+          <strong>Initial Login</strong>
+          <p>User logs in with email/password. The server returns both access (24h) and refresh tokens (permanent). Tokens should be stored securely.</p>
+          <pre><code>const response = await fetch('/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password })
+});
+const { access_token, refresh_token } = await response.json();
+localStorage.setItem('access_token', access_token);
+localStorage.setItem('refresh_token', refresh_token);</code></pre>
+        </li>
+        <li>
+          <strong>Making API Requests</strong>
+          <p>Use the access token for API requests and handle 401 errors by refreshing the token.</p>
+          <pre><code>async function apiRequest(url, options = {}) {
+  // Add access token to headers
+  const headers = {
+    ...options.headers,
+    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+  };
+
+  let response = await fetch(url, { ...options, headers });
+  
+  // If token expired, refresh it and retry
+  if (response.status === 401) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      // Retry with new access token
+      headers.Authorization = `Bearer ${localStorage.getItem('access_token')}`;
+      response = await fetch(url, { ...options, headers });
+    }
+  }
+  
+  return response;
+}</code></pre>
+        </li>
+        <li>
+          <strong>Token Refresh Mechanism</strong>
+          <pre><code>async function refreshAccessToken() {
+  try {
+    const response = await fetch('/auth/refresh', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        refresh_token: localStorage.getItem('refresh_token')
+      })
+    });
+
+    if (response.ok) {
+      const { access_token } = await response.json();
+      localStorage.setItem('access_token', access_token);
+      return true;
+    }
+    
+    // If refresh fails, redirect to login
+    window.location.href = '/login';
+    return false;
+  } catch (error) {
+    console.error('Token refresh failed:', error);
+    return false;
+  }
+}</code></pre>
+        </li>
+        <li>
+          <strong>Logout Handling</strong>
+          <pre><code>function logout() {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  window.location.href = '/login';
+}</code></pre>
+        </li>
+      </ol>
+      <h3>Key Implementation Notes</h3>
+      <ul>
+        <li><strong>Token Storage:</strong> Store access tokens (short-lived) and refresh tokens (permanent session) securely. For web, consider localStorage or sessionStorage.</li>
+        <li><strong>Error Handling:</strong> Handle 401 responses for expired tokens and manage network errors.</li>
+        <li><strong>Security Considerations:</strong> Always use HTTPS, clear tokens on logout, and consider rate limiting for token refresh attempts.</li>
+      </ul>
+    </section>
+
+    <section id="security">
+      <h2>Security Features</h2>
+      <ol>
+        <li>
+          <strong>Password Hashing:</strong>
+          <p>Passwords are hashed using bcrypt before storage and securely compared during login.</p>
+        </li>
+        <li>
+          <strong>JWT Authentication:</strong>
+          <ul>
+            <li>Access tokens expire after 24 hours</li>
+            <li>Refresh tokens are permanent</li>
+            <li>Tokens are signed with a secret key</li>
+            <li>Tokens contain user ID for authentication</li>
+            <li>Automatic token refresh mechanism</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Protected Routes:</strong>
+          <p>JWT authentication middleware validates tokens and injects user context for protected routes.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="database">
+      <h2>Database Schema</h2>
+      <p>The User model includes:</p>
+      <ul>
+        <li>ID (uint, primary key)</li>
+        <li>Email (string, unique)</li>
+        <li>Password (string, hashed)</li>
+        <li>FirstName (string)</li>
+        <li>LastName (string)</li>
+        <li>LastLogin (timestamp)</li>
+        <li>IsActive (boolean)</li>
+        <li>EmailVerified (boolean)</li>
+        <li>CreatedAt (timestamp)</li>
+        <li>UpdatedAt (timestamp)</li>
+        <li>DeletedAt (soft delete)</li>
+      </ul>
+    </section>
+
+    <section id="contributing">
+      <h2>Contributing</h2>
+      <ol>
+        <li>Fork the repository</li>
+        <li>Create a feature branch</li>
+        <li>Commit your changes</li>
+        <li>Push to the branch</li>
+        <li>Create a Pull Request</li>
+      </ol>
+    </section>
+
+    <section id="testing">
+      <h2>Testing with Postman</h2>
+      <p>The project includes a Postman collection (<code>auth_server.postman_collection.json</code>) for testing the API endpoints. To use it:</p>
+      <ol>
+        <li>Import the collection into Postman</li>
+        <li>Create a new environment and add the variable <code>jwt_token</code> (it will update automatically after login)</li>
+        <li>Test endpoints such as registering a new user, logging in, and accessing protected routes</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Auth Server. Open Source. Built with Go.</p>
+  </footer>
 </body>
 </html>
