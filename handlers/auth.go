@@ -13,10 +13,12 @@ import (
 )
 
 type RegisterInput struct {
-	Email     string `json:"email" binding:"required,email"`
-	Password  string `json:"password" binding:"required,min=6"`
-	FirstName string `json:"first_name" binding:"required"`
-	LastName  string `json:"last_name" binding:"required"`
+	Email       string  `json:"email" binding:"required,email"`
+	Password    string  `json:"password" binding:"required,min=6"`
+	FirstName   string  `json:"first_name" binding:"required"`
+	LastName    string  `json:"last_name" binding:"required"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+	CountryCode *string `json:"country_code,omitempty"`
 }
 
 type LoginInput struct {
@@ -30,6 +32,17 @@ type RefreshInput struct {
 
 type RequestResetInput struct {
 	Email string `json:"email" binding:"required,email"`
+}
+
+type PhoneLoginInput struct {
+	PhoneNumber string `json:"phone_number" binding:"required"`
+	CountryCode string `json:"country_code" binding:"required"`
+}
+
+type VerifyPhoneOtpInput struct {
+	PhoneNumber string `json:"phone_number" binding:"required"`
+	CountryCode string `json:"country_code" binding:"required"`
+	OTP         string `json:"otp" binding:"required"`
 }
 
 type ResetPasswordInput struct {
@@ -55,6 +68,12 @@ func Register(c *gin.Context) {
 		Password:  string(hashedPassword),
 		FirstName: input.FirstName,
 		LastName:  input.LastName,
+	}
+	if input.PhoneNumber != nil {
+		user.PhoneNumber = *input.PhoneNumber
+	}
+	if input.CountryCode != nil {
+		user.CountryCode = *input.CountryCode
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {
@@ -190,4 +209,82 @@ func ResetPassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Password reset successful"})
+}
+
+func PhoneLogin(c *gin.Context) {
+	var input PhoneLoginInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Format full phone number with country code
+	fullPhone := input.CountryCode + input.PhoneNumber
+
+	// Check if user exists with this phone number
+	var user models.User
+	if err := config.DB.Where("phone_number = ? AND country_code = ?",
+		input.PhoneNumber, input.CountryCode).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No user found with this phone number"})
+		return
+	}
+
+	// Generate OTP
+	otp, err := utils.GenerateOTP(fullPhone)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate OTP"})
+		return
+	}
+
+	// In production, send OTP via SMS
+	// For development, return it in response
+	c.JSON(http.StatusOK, gin.H{
+		"message": "OTP sent successfully",
+		"otp":     otp, // Remove this in production
+	})
+}
+
+func VerifyPhoneOtp(c *gin.Context) {
+	var input VerifyPhoneOtpInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Format full phone number
+	fullPhone := input.CountryCode + input.PhoneNumber
+
+	// Validate OTP
+	valid, err := utils.ValidateOTP(fullPhone, input.OTP)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired OTP"})
+		return
+	}
+
+	// Verify the stored phone matches the submitted phone
+	if !valid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid OTP"})
+		return
+	}
+
+	// Find user
+	var user models.User
+	if err := config.DB.Where("phone_number = ? AND country_code = ?",
+		input.PhoneNumber, input.CountryCode).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Generate tokens
+	accessToken, refreshToken, err := utils.GenerateTokenPair(user.ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":       "Phone verified successfully",
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	})
 }

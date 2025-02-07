@@ -19,7 +19,7 @@ func main() {
 	}
 
 	config.ConnectDatabase()
-	config.ConnectRedis() // Add Redis connection
+	config.ConnectRedis()
 
 	r := gin.Default()
 
@@ -29,6 +29,8 @@ func main() {
 	r.POST("/auth/refresh", handlers.RefreshToken)
 	r.POST("/auth/request-reset", handlers.RequestPasswordReset) // Add password reset request route
 	r.POST("/auth/reset-password", handlers.ResetPassword)       // Add password reset route
+	r.POST("/auth/phone-login", handlers.PhoneLogin)
+	r.POST("/auth/verify-phone-otp", handlers.VerifyPhoneOtp)
 
 	// Protected routes group
 	protected := r.Group("/api")
